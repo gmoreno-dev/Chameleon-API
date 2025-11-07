@@ -1,0 +1,11 @@
+
+###
+POST http://127.0.0.1:8000/convert/pdf-to-png
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="example.pdf"
+Content-Type: application/pdf
+
+< ./example.pdf
+------WebKitFormBoundary--
