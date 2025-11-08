@@ -165,6 +165,27 @@
         .footer a:hover {
             text-decoration: underline;
         }
+
+        .conversion-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .conversion-item {
+            flex: 1 1 45%;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .conversion-item h3 {
+            color: #2E7D32;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
@@ -173,24 +194,74 @@
         <h1>Chameleon API</h1>
         <div class="subtitle">Transforme seus arquivos e mude de forma como um camaleão 🦎</div>
         
-        <!-- HTML to PDF Section -->
+        <!-- Document Conversions -->
         <div class="section">
-            <h2>🖨️ HTML para PDF</h2>
-            <form id="htmlForm">
-                <label for="htmlInput">Cole seu código HTML aqui:</label>
-                <textarea id="htmlInput" name="html" placeholder="Insira o HTML..."></textarea>
-                <button type="submit">Converter para PDF</button>
-            </form>
+            <h2>� Conversões de Documentos</h2>
+            <div class="conversion-group">
+                <div class="conversion-item">
+                    <h3>�🖨️ HTML para PDF</h3>
+                    <form id="htmlForm">
+                        <label for="htmlInput">Cole seu código HTML aqui:</label>
+                        <textarea id="htmlInput" name="html" placeholder="Insira o HTML..."></textarea>
+                        <button type="submit">Converter para PDF</button>
+                    </form>
+                </div>
+                <div class="conversion-item">
+                    <h3>🖼️ JPEG para PDF</h3>
+                    <form id="jpegPdfForm">
+                        <label for="jpegPdfFile">Selecione um arquivo JPEG:</label>
+                        <input type="file" id="jpegPdfFile" accept=".jpg,.jpeg" required>
+                        <button type="submit">Converter para PDF</button>
+                    </form>
+                </div>
+                <div class="conversion-item">
+                    <h3>�️ PNG para PDF</h3>
+                    <form id="pngPdfForm">
+                        <label for="pngPdfFile">Selecione um arquivo PNG:</label>
+                        <input type="file" id="pngPdfFile" accept=".png" required>
+                        <button type="submit">Converter para PDF</button>
+                    </form>
+                </div>
+            </div>
         </div>
         
-        <!-- PDF to PNG Section -->
+        <!-- Image Conversions -->
         <div class="section">
-            <h2>📄 PDF para PNG</h2>
-            <form id="pdfForm">
-                <label for="pdfFile">Selecione um arquivo PDF:</label>
-                <input type="file" id="pdfFile" accept=".pdf" required>
-                <button type="submit">Converter para PNG</button>
-            </form>
+            <h2>🖼️ Conversões de Imagens</h2>
+            <div class="conversion-group">
+                <div class="conversion-item">
+                    <h3>📄 PDF para PNG</h3>
+                    <form id="pdfPngForm">
+                        <label for="pdfPngFile">Selecione um arquivo PDF:</label>
+                        <input type="file" id="pdfPngFile" accept=".pdf" required>
+                        <button type="submit">Converter para PNG</button>
+                    </form>
+                </div>
+                <div class="conversion-item">
+                    <h3>📄 PDF para JPEG</h3>
+                    <form id="pdfJpegForm">
+                        <label for="pdfJpegFile">Selecione um arquivo PDF:</label>
+                        <input type="file" id="pdfJpegFile" accept=".pdf" required>
+                        <button type="submit">Converter para JPEG</button>
+                    </form>
+                </div>
+                <div class="conversion-item">
+                    <h3>🖼️ PNG para JPEG</h3>
+                    <form id="pngJpegForm">
+                        <label for="pngJpegFile">Selecione um arquivo PNG:</label>
+                        <input type="file" id="pngJpegFile" accept=".png" required>
+                        <button type="submit">Converter para JPEG</button>
+                    </form>
+                </div>
+                <div class="conversion-item">
+                    <h3>🖼️ JPEG para PNG</h3>
+                    <form id="jpegPngForm">
+                        <label for="jpegPngFile">Selecione um arquivo JPEG:</label>
+                        <input type="file" id="jpegPngFile" accept=".jpg,.jpeg" required>
+                        <button type="submit">Converter para PNG</button>
+                    </form>
+                </div>
+            </div>
         </div>
         
         <div class="sample-html">
@@ -211,7 +282,7 @@
         </div>
 
         <div class="footer">
-            <p>Feito com ❤️ pela Chameleon API | <a href="/docs">Documentação</a></p>
+            <p>By Gabriel Moreno 🦎 | <a href="/docs">Documentação</a></p>
         </div>
     </div>
 
@@ -256,10 +327,10 @@
         });
         
         // PDF to PNG
-        document.getElementById('pdfForm').addEventListener('submit', async function(e) {
+        document.getElementById('pdfPngForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const fileInput = document.getElementById('pdfFile');
+            const fileInput = document.getElementById('pdfPngFile');
             const file = fileInput.files[0];
             if (!file) {
                 alert('Por favor, selecione um arquivo PDF.');
@@ -271,6 +342,200 @@
                 formData.append('file', file);
                 
                 const response = await fetch('/convert/pdf-to-png', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'output.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('Erro ao converter: ' + response.statusText);
+                }
+            } catch (error) {
+                alert('Erro: ' + error.message);
+            }
+        });
+        
+        // PNG to PDF
+        document.getElementById('pngPdfForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('pngPdfFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Por favor, selecione um arquivo PNG.');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch('/convert/png-to-pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const pdfBytes = Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0));
+                    const blob = new Blob([pdfBytes], {type: 'application/pdf'});
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'output.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('Erro ao converter: ' + response.statusText);
+                }
+            } catch (error) {
+                alert('Erro: ' + error.message);
+            }
+        });
+        
+        // PNG to JPEG
+        document.getElementById('pngJpegForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('pngJpegFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Por favor, selecione um arquivo PNG.');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch('/convert/png-to-jpeg', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'output.jpg';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('Erro ao converter: ' + response.statusText);
+                }
+            } catch (error) {
+                alert('Erro: ' + error.message);
+            }
+        });
+        
+        // JPEG to PDF
+        document.getElementById('jpegPdfForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('jpegPdfFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Por favor, selecione um arquivo JPEG.');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch('/convert/jpeg-to-pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const pdfBytes = Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0));
+                    const blob = new Blob([pdfBytes], {type: 'application/pdf'});
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'output.pdf';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('Erro ao converter: ' + response.statusText);
+                }
+            } catch (error) {
+                alert('Erro: ' + error.message);
+            }
+        });
+        
+        // PDF to JPEG
+        document.getElementById('pdfJpegForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('pdfJpegFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Por favor, selecione um arquivo PDF.');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch('/convert/pdf-to-jpeg', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'output.jpg';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('Erro ao converter: ' + response.statusText);
+                }
+            } catch (error) {
+                alert('Erro: ' + error.message);
+            }
+        });
+        
+        // JPEG to PNG
+        document.getElementById('jpegPngForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('jpegPngFile');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Por favor, selecione um arquivo JPEG.');
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch('/convert/jpeg-to-png', {
                     method: 'POST',
                     body: formData
                 });
@@ -353,7 +618,7 @@
     <div class="amount">R$ 2.500,00</div>
     
     <div class="row">
-        <span>De: Gabriel Moreno Silva</span>
+        <span>De: Gabriel Moreno</span>
         <span>CPF: 123.456.789-00</span>
     </div>
     
