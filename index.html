@@ -50,6 +50,25 @@
             font-style: italic;
         }
 
+        .api-key-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .api-key-section label {
+            font-weight: bold;
+            color: #2E7D32;
+            margin-right: 10px;
+        }
+
+        .api-key-section input {
+            padding: 8px 12px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            font-size: 1em;
+            width: 250px;
+        }
+
         .chameleon {
             text-align: center;
             font-size: 3em;
@@ -194,6 +213,13 @@
         <h1>Chameleon API</h1>
         <div class="subtitle">Transforme seus arquivos e mude de forma como um camaleão 🦎</div>
         
+        <div class="api-key-section">
+            <label for="apiKey">Chave API:</label>
+            <input type="password" id="apiKey" placeholder="Digite sua chave API" value="chameleonv2Ncod4ulFdSgrbDrYpedbGuHBhnHqAL">
+        </div>
+        
+        <div class="sections">
+        
         <!-- Document Conversions -->
         <div class="section">
             <h2>� Conversões de Documentos</h2>
@@ -203,6 +229,21 @@
                     <form id="htmlForm">
                         <label for="htmlInput">Cole seu código HTML aqui:</label>
                         <textarea id="htmlInput" name="html" placeholder="Insira o HTML..."></textarea>
+                        <label for="pageSize">Tamanho da Página:</label>
+                        <select id="pageSize" name="page_size">
+                            <option value="A4" selected>A4</option>
+                            <option value="A3">A3</option>
+                            <option value="Letter">Letter</option>
+                            <option value="Legal">Legal</option>
+                        </select><br>
+                        <label for="marginTop">Margem Superior (mm):</label>
+                        <input type="number" id="marginTop" name="margin_top" value="10" min="0"><br>
+                        <label for="marginBottom">Margem Inferior (mm):</label>
+                        <input type="number" id="marginBottom" name="margin_bottom" value="10" min="0"><br>
+                        <label for="marginLeft">Margem Esquerda (mm):</label>
+                        <input type="number" id="marginLeft" name="margin_left" value="10" min="0"><br>
+                        <label for="marginRight">Margem Direita (mm):</label>
+                        <input type="number" id="marginRight" name="margin_right" value="10" min="0"><br>
                         <button type="submit">Converter para PDF</button>
                     </form>
                 </div>
@@ -211,6 +252,10 @@
                     <form id="jpegPdfForm">
                         <label for="jpegPdfFile">Selecione um arquivo JPEG:</label>
                         <input type="file" id="jpegPdfFile" accept=".jpg,.jpeg" required>
+                        <label for="jpegBorderWidth">Largura da Borda (px):</label>
+                        <input type="number" id="jpegBorderWidth" name="border_width" value="0" min="0"><br>
+                        <label for="jpegBorderColor">Cor da Borda:</label>
+                        <input type="text" id="jpegBorderColor" name="border_color" value="black"><br>
                         <button type="submit">Converter para PDF</button>
                     </form>
                 </div>
@@ -219,6 +264,10 @@
                     <form id="pngPdfForm">
                         <label for="pngPdfFile">Selecione um arquivo PNG:</label>
                         <input type="file" id="pngPdfFile" accept=".png" required>
+                        <label for="pngBorderWidth">Largura da Borda (px):</label>
+                        <input type="number" id="pngBorderWidth" name="border_width" value="0" min="0"><br>
+                        <label for="pngBorderColor">Cor da Borda:</label>
+                        <input type="text" id="pngBorderColor" name="border_color" value="black"><br>
                         <button type="submit">Converter para PDF</button>
                     </form>
                 </div>
@@ -297,11 +346,21 @@
                 return;
             }
             
+            const pageSize = document.getElementById('pageSize').value;
+            const marginTop = document.getElementById('marginTop').value;
+            const marginBottom = document.getElementById('marginBottom').value;
+            const marginLeft = document.getElementById('marginLeft').value;
+            const marginRight = document.getElementById('marginRight').value;
+            const apiKey = document.getElementById('apiKey').value;
+            
+            const url = `/convert/html-to-pdf?page_size=${pageSize}&margin_top=${marginTop}&margin_bottom=${marginBottom}&margin_left=${marginLeft}&margin_right=${marginRight}`;
+            
             try {
-                const response = await fetch('/convert/html-to-pdf', {
+                const response = await fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'text/plain'
+                        'Content-Type': 'text/plain',
+                        'X-API-Key': apiKey
                     },
                     body: html
                 });
@@ -341,8 +400,13 @@
                 const formData = new FormData();
                 formData.append('file', file);
                 
+                const apiKey = document.getElementById('apiKey').value;
+                
                 const response = await fetch('/convert/pdf-to-png', {
                     method: 'POST',
+                    headers: {
+                        'X-API-Key': apiKey
+                    },
                     body: formData
                 });
                 
@@ -379,8 +443,17 @@
                 const formData = new FormData();
                 formData.append('file', file);
                 
-                const response = await fetch('/convert/png-to-pdf', {
+                const borderWidth = document.getElementById('pngBorderWidth').value;
+                const borderColor = document.getElementById('pngBorderColor').value;
+                const apiKey = document.getElementById('apiKey').value;
+                
+                const url = `/convert/png-to-pdf?border_width=${borderWidth}&border_color=${borderColor}`;
+                
+                const response = await fetch(url, {
                     method: 'POST',
+                    headers: {
+                        'X-API-Key': apiKey
+                    },
                     body: formData
                 });
                 
@@ -419,8 +492,13 @@
                 const formData = new FormData();
                 formData.append('file', file);
                 
+                const apiKey = document.getElementById('apiKey').value;
+                
                 const response = await fetch('/convert/png-to-jpeg', {
                     method: 'POST',
+                    headers: {
+                        'X-API-Key': apiKey
+                    },
                     body: formData
                 });
                 
@@ -457,8 +535,17 @@
                 const formData = new FormData();
                 formData.append('file', file);
                 
-                const response = await fetch('/convert/jpeg-to-pdf', {
+                const borderWidth = document.getElementById('jpegBorderWidth').value;
+                const borderColor = document.getElementById('jpegBorderColor').value;
+                const apiKey = document.getElementById('apiKey').value;
+                
+                const url = `/convert/jpeg-to-pdf?border_width=${borderWidth}&border_color=${borderColor}`;
+                
+                const response = await fetch(url, {
                     method: 'POST',
+                    headers: {
+                        'X-API-Key': apiKey
+                    },
                     body: formData
                 });
                 
@@ -497,8 +584,13 @@
                 const formData = new FormData();
                 formData.append('file', file);
                 
+                const apiKey = document.getElementById('apiKey').value;
+                
                 const response = await fetch('/convert/pdf-to-jpeg', {
                     method: 'POST',
+                    headers: {
+                        'X-API-Key': apiKey
+                    },
                     body: formData
                 });
                 
@@ -535,8 +627,13 @@
                 const formData = new FormData();
                 formData.append('file', file);
                 
+                const apiKey = document.getElementById('apiKey').value;
+                
                 const response = await fetch('/convert/jpeg-to-png', {
                     method: 'POST',
+                    headers: {
+                        'X-API-Key': apiKey
+                    },
                     body: formData
                 });
                 
