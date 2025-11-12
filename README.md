@@ -1,6 +1,6 @@
 # Chameleon API 🦎
 
-Uma API em desenveolvimento para conversão de arquivos, desenvolvida com FastAPI. Transforme seus arquivos, mudando de forma como um camaleão!
+Uma API em desenvolvimento para conversão de arquivos, desenvolvida com FastAPI. Transforme seus arquivos, mudando de forma como um camaleão!
 
 ## Funcionalidades
 
