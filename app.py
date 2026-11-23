@@ -6,13 +6,16 @@ import base64
 import fitz
 from PIL import Image
 import os
+import secrets
 
 app = FastAPI()
 
-API_KEY = os.getenv("CHAMELEON_API_KEY", "chameleonv2Ncod4ulFdSgrbDrYpedbGuHBhnHqAL")
+API_KEY = os.getenv("CHAMELEON_API_KEY")
+if not API_KEY:
+    raise RuntimeError("Defina a variável de ambiente CHAMELEON_API_KEY antes de subir a API.")
 
 def verify_api_key(x_api_key: str = Header(..., alias="X-API-Key")):
-    if x_api_key != API_KEY:
+    if not secrets.compare_digest(x_api_key, API_KEY):
         raise HTTPException(status_code=401, detail="Invalid API Key")
     return x_api_key
 

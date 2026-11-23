@@ -16,14 +16,15 @@ Uma API em desenvolvimento para conversão de arquivos, desenvolvida com FastAPI
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/seu-usuario/chameleon-api.git
-cd chameleon-api
+git clone https://github.com/gmoreno-dev/Chameleon-API.git
+cd Chameleon-API
 ```
 
 2. Crie um ambiente virtual:
 ```bash
 python -m venv venv
-venv\Scripts\activate  # Windows
+source venv/bin/activate   # Linux/macOS
+venv\Scripts\activate      # Windows
 ```
 
 3. Instale as dependências:
@@ -31,12 +32,12 @@ venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 ```
 
-4. Configure a chave API (opcional):
+4. Configure a chave da API (obrigatório):
 ```bash
 # Defina a variável de ambiente
-export CHAMELEON_API_KEY="sua_chave_secreta_aqui"
+export CHAMELEON_API_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
 ```
-Se não definida, a chave padrão é `chameleon_secret_key_2025`.
+Sem essa variável a API não sobe. Não existe chave padrão.
 
 ## Executando
 
@@ -50,9 +51,8 @@ Acesse `http://127.0.0.1:8000` para usar a interface web ou `http://127.0.0.1:80
 
 A API utiliza autenticação baseada em chave API para proteger os endpoints de conversão. Todas as requisições devem incluir o header `X-API-Key` com uma chave válida.
 
-- **Chave padrão**: `chameleon_secret_key_2025` (para desenvolvimento)
-- **Configuração**: Defina a variável de ambiente `CHAMELEON_API_KEY` para uma chave personalizada
-- **Interface web**: A chave API é inserida automaticamente no campo dedicado
+- **Configuração**: defina a variável de ambiente `CHAMELEON_API_KEY` (obrigatória)
+- **Interface web**: digite a chave no campo "Chave API" antes de converter
 
 ## Uso da API
 
@@ -60,7 +60,7 @@ A API utiliza autenticação baseada em chave API para proteger os endpoints de 
 ```bash
 curl -X POST "http://127.0.0.1:8000/convert/html-to-pdf?page_size=A4&margin_top=10&margin_bottom=10&margin_left=10&margin_right=10" \
      -H "Content-Type: text/plain" \
-     -H "X-API-Key: chameleon_secret_key_2025" \
+     -H "X-API-Key: $CHAMELEON_API_KEY" \
      -d "<html><body><h1>Olá!</h1></body></html>" \
      --output output.pdf
 ```
@@ -72,7 +72,7 @@ curl -X POST "http://127.0.0.1:8000/convert/html-to-pdf?page_size=A4&margin_top=
 ### PDF para PNG
 ```bash
 curl -X POST "http://127.0.0.1:8000/convert/pdf-to-png" \
-     -H "X-API-Key: chameleon_secret_key_2025" \
+     -H "X-API-Key: $CHAMELEON_API_KEY" \
      -F "file=@arquivo.pdf" \
      --output output.png
 ```
@@ -80,7 +80,7 @@ curl -X POST "http://127.0.0.1:8000/convert/pdf-to-png" \
 ### PDF para JPEG
 ```bash
 curl -X POST "http://127.0.0.1:8000/convert/pdf-to-jpeg" \
-     -H "X-API-Key: chameleon_secret_key_2025" \
+     -H "X-API-Key: $CHAMELEON_API_KEY" \
      -F "file=@arquivo.pdf" \
      --output output.jpg
 ```
@@ -88,7 +88,7 @@ curl -X POST "http://127.0.0.1:8000/convert/pdf-to-jpeg" \
 ### PNG para PDF
 ```bash
 curl -X POST "http://127.0.0.1:8000/convert/png-to-pdf?border_width=5&border_color=red" \
-     -H "X-API-Key: chameleon_secret_key_2025" \
+     -H "X-API-Key: $CHAMELEON_API_KEY" \
      -F "file=@imagem.png" \
      --output output.pdf
 ```
@@ -100,7 +100,7 @@ curl -X POST "http://127.0.0.1:8000/convert/png-to-pdf?border_width=5&border_col
 ### PNG para JPEG
 ```bash
 curl -X POST "http://127.0.0.1:8000/convert/png-to-jpeg" \
-     -H "X-API-Key: chameleon_secret_key_2025" \
+     -H "X-API-Key: $CHAMELEON_API_KEY" \
      -F "file=@imagem.png" \
      --output output.jpg
 ```
@@ -108,7 +108,7 @@ curl -X POST "http://127.0.0.1:8000/convert/png-to-jpeg" \
 ### JPEG para PDF
 ```bash
 curl -X POST "http://127.0.0.1:8000/convert/jpeg-to-pdf?border_width=5&border_color=blue" \
-     -H "X-API-Key: chameleon_secret_key_2025" \
+     -H "X-API-Key: $CHAMELEON_API_KEY" \
      -F "file=@imagem.jpg" \
      --output output.pdf
 ```
@@ -120,7 +120,7 @@ curl -X POST "http://127.0.0.1:8000/convert/jpeg-to-pdf?border_width=5&border_co
 ### JPEG para PNG
 ```bash
 curl -X POST "http://127.0.0.1:8000/convert/jpeg-to-png" \
-     -H "X-API-Key: chameleon_secret_key_2025" \
+     -H "X-API-Key: $CHAMELEON_API_KEY" \
      -F "file=@imagem.jpg" \
      --output output.png
 ```
